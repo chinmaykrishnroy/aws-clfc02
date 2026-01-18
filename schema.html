@@ -132,22 +132,36 @@
             <button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>
             <pre id="ai-prompt">Create 50 high-quality practice questions for the AWS Certified Cloud Practitioner (CLF-C02) exam.
 
+Act as a Senior AWS Certification Subject Matter Expert. Create a batch of 20 high-quality practice questions for the AWS Certified Cloud Practitioner (CLF-C02) exam.
+
 **Output Format:**
-Provide a single, strictly valid JSON array of objects. Do not wrap in markdown code blocks.
+Provide a single, strictly valid JSON array of objects. Do not wrap the output in markdown code blocks (no ```json).
 
 **Schema Requirements:**
-1. "id": Unique integer (start from 1).
+1. "id": Unique integer (start from 1, increment sequentially).
 2. "question": The question text.
-3. "options": Array of 4-5 distinct string choices.
+3. "options": Array of 4 (for single choice) or 5 (for multiple response) distinct string choices.
 4. "answer": Array of strings containing the correct option(s). Text must match "options" exactly.
 5. "type": String, either "single_choice" or "multiple_response".
-6. "domain": String (e.g., "Cloud Concepts", "Security and Compliance", "Billing", "Technology").
-7. "explanation": A detailed string explaining the correct answer.
+6. "domain": String (Must be one of: "Cloud Concepts", "Security and Compliance", "Cloud Technology and Services", "Billing, Pricing, and Support").
+7. "explanation": A detailed string explaining WHY the correct answer is right and WHY the distractors are wrong.
 
-**Content Requirements:**
-- Focus on CLF-C02 specific topics: Cloud Adoption Framework (CAF), Well-Architected Framework, Migration Strategies (7 Rs), and newer AI services (Bedrock, Q, CodeWhisperer).
-- Ensure a mix of 70% single choice and 30% multiple response questions.
-- Avoid deprecated services.
+**Crucial Content Guidelines:**
+1. **Scenario-Based:** 80% of questions must start with a scenario (e.g., "A company wants to...", "A developer needs to..."). Avoid simple definition questions.
+2. **Plausible Distractors:** Do NOT use made-up service names (e.g., do not use "AWS Server"). Use REAL AWS services that are incorrect for the specific scenario (e.g., suggesting "S3 Glacier" when the user needs milliseconds latency).
+3. **CLF-C02 Specifics:** Focus heavily on the updated exam guide:
+   - Cloud Adoption Framework (CAF) perspectives.
+   - Well-Architected Framework (6 pillars).
+   - Migration strategies (7 Rs).
+   - Modern AI/ML (Amazon Bedrock, Amazon Q, SageMaker).
+   - Security & Compliance (Shared Responsibility Model).
+4. **Difficulty:** Moderate to Hard. Avoid obvious answers.
+
+**Domain Weighting (Approximate):**
+- Cloud Technology and Services: ~34%
+- Security and Compliance: ~30%
+- Cloud Concepts: ~24%
+- Billing, Pricing, and Support: ~12%
 </pre>
         </div>
 
