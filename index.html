@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS CLF-C02 Exam Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="exam-header">
+        <div class="header-left">
+            <span class="exam-title">AWS Certified Cloud Practitioner (CLF-C02)</span>
+        </div>
+        <div class="header-right">
+            <div id="global-timer-container" class="timer-box" style="display:none;">
+                <span class="timer-label">Time Remaining:</span>
+                <span id="display-timer">00:00:00</span>
+            </div>
+            <button id="theme-toggle" class="btn-icon theme-btn" title="Toggle Theme">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <div id="timer-bar-container" class="timer-bar-container">
+        <div id="timer-bar" class="timer-bar"></div>
+    </div>
+
+    <main id="view-setup" class="view active">
+        <div class="setup-card">
+            <h1>Exam Simulator</h1>
+            <div class="drop-zone" id="drop-zone">
+                <div class="icon">📂</div>
+                <p>Drag & Drop <code>.json</code> Question Files</p>
+                <small>or click to browse</small>
+                <input type="file" id="file-input" multiple accept=".json" hidden>
+            </div>
+            <div id="file-status" class="status-text">0 questions loaded</div>
+            <hr class="divider">
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label>Questions to Attempt</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="setting-q-count" min="1" disabled>
+                    </div>
+                    <small class="hint">Max available: <span id="max-q-val">0</span></small>
+                </div>
+                <div class="setting-item">
+                    <label>Timer Per Question (sec)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="setting-timer-limit" placeholder="0 = Unlimited" value="0">
+                    </div>
+                    <small class="hint">0 to disable</small>
+                </div>
+            </div>
+            <button id="btn-start" class="btn-primary-large" disabled>Start Exam</button>
+            <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted);">
+                <a href="#" id="load-demo" style="text-decoration: none; color: var(--accent);">Load Stored Question</a>
+                <a href="schema.html" target="_blank" style="text-decoration: none; color: var(--text-muted);">Schema Guide ↗</a>
+            </div>
+        </div>
+    </main>
+
+    <main id="view-exam" class="view">
+        <div class="exam-layout">
+            <section class="exam-main-content">
+                <div class="exam-toolbar">
+                    <div class="toolbar-left">
+                        <span class="q-number">Question <span id="current-q-num">1</span> of <span id="total-q-num">--</span></span>
+                    </div>
+                    <div class="toolbar-right">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="mark-review">
+                            <label for="mark-review">Mark for Review <span class="shortcut-hint">(F)</span></label>
+                        </div>
+                        <button id="sidebar-toggle" class="btn-icon sidebar-toggle" title="Show Grid">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="q-content-scroll">
+                        <p id="q-text" class="question-stem">Loading...</p>
+                        <div id="options-list" class="options-group"></div>
+                    </div>
+                </div>
+
+                <div class="exam-footer">
+                    <button id="btn-end-exam" class="btn-footer secondary">End Exam</button>
+                    <div class="nav-buttons">
+                        <button id="btn-prev" class="btn-footer secondary" disabled>&lt; Previous</button>
+                        <button id="btn-next" class="btn-footer primary">Next &gt;</button>
+                    </div>
+                </div>
+            </section>
+
+            <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+            <aside id="exam-sidebar" class="exam-sidebar">
+                <div class="sidebar-header">Question Navigator</div>
+                <div id="progress-grid" class="progress-grid"></div>
+                <div class="sidebar-footer">
+                    <div class="legend">
+                        <div class="legend-item"><span class="dot answer"></span> Answered</div>
+                        <div class="legend-item"><span class="dot visited"></span> Visited</div>
+                        <div class="legend-item"><span class="dot current"></span> Current</div>
+                        <div class="legend-item"><span class="dot unvisited"></span> Unvisited</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <main id="view-results" class="view">
+        <div class="results-container">
+            <div class="score-header">
+                <div class="score-badge" id="score-badge">--</div>
+                <h1>Exam Results</h1>
+            </div>
+            <div class="score-details">
+                <div class="detail-box">
+                    <span class="label">Score</span>
+                    <span class="value" id="res-score">0%</span>
+                </div>
+                <div class="detail-box">
+                    <span class="label">Correct</span>
+                    <span class="value" id="res-correct">0</span>
+                </div>
+                <div class="detail-box">
+                    <span class="label">Total</span>
+                    <span class="value" id="res-total">0</span>
+                </div>
+            </div>
+            <div class="action-area">
+                <button onclick="location.reload()" class="btn-primary-large">Return to Home</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-box">
+            <h2 class="modal-title">End Exam?</h2>
+            <div class="modal-body" id="modal-body-text"></div>
+            <div class="modal-actions">
+                <button id="modal-btn-cancel" class="btn-footer secondary">Keep Working</button>
+                <button id="modal-btn-confirm" class="btn-footer primary">Submit Exam</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
